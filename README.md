@@ -1,2 +1,2 @@
 # microcontrollers
-Material from Microcontrollers and Embed Systems Classes
+Material from Microcontrollers and Embedded Systems Classes
