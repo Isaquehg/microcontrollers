@@ -44,4 +44,4 @@ INterrupção Externa do Pino PD3
                    0     0     -> Ambos desabilitados
                    1     0
                    0     1
-                   1     1
+                   1     1     -> Ambos habilitados
