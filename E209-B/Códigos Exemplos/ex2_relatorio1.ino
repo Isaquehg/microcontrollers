@@ -8,7 +8,7 @@
 int main(void)
 {
   // Configurar a direção dos pinos
-  DDRD = MOTOR | ALARME; // PD0 declarado como saída
+  DDRD = MOTOR | ALARME;
 
   // Desliga as saídas que precisam iniciar desligadas
   PORTD &= ~(MOTOR | ALARME);
@@ -16,7 +16,7 @@ int main(void)
   // Super Loop
   while (1)
   {
-	// Verifica se o botão LIGA foi pressionado e se o sensor não está acionado
+	// Verifica se o botão LIGA foi pressionado e se -o sensor não está acionado
     if (!(PINB & LIGA) && (PINB & SENSOR))
     {
       PORTD &= ~ALARME; // desativando o alarme

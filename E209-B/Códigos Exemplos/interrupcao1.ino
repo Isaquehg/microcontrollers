@@ -3,7 +3,6 @@
 #define LED (1<<PB0)
 
 int main(){
-  
   DDRB = LED;
   PORTD |= DESLIGA;
   
@@ -13,7 +12,6 @@ int main(){
   EIMSK = (1<<INT1)+(1<<INT0);
   
   PORTB &= ~LED;
-  
   
   //Utilizei interrupção? Se sim, COLOQUE "sei();"
   sei();
