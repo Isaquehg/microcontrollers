@@ -1,5 +1,5 @@
 #define LIGA (1 << PB0) //botao liga motor
-#define DESLIGA (1 <<PB1) //botao desliga motor
+#define DESLIGA (1 << PB1) //botao desliga motor
 #define S1 (1 << PB2) //sensor caixa grande
 #define S2 (1 << PB3) //sensor caixa media
 #define S3 (1 << PB4) //sensor caixa pequena
