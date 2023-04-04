@@ -8,7 +8,7 @@ int main(void){
     DDRD = (MA | MF);
     PORTD &= ~(MA | MF);
 
-    EICRA = (1 << ISC01) + (1 << ISC00);
+    EICRA = (1 << ISC01) + (0 << ISC00);
     EIMSK = (0 << INT1) | (1 << INT0);
 
     sei();
@@ -20,6 +20,8 @@ int main(void){
 
 ISR(INT0_vect){
     short int sa, sf;
+    sa = PIND & sa;
+  	sf = PIND & sf;
 
     //se ja estiver aberto
     if((sa == SA) && (sf != SF)){

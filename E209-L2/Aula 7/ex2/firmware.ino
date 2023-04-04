@@ -9,23 +9,22 @@ int main(){
     PORTB &= ~(VALVULA + ENCHENDO);
     PORTB |= CHEIO;
 
+    EICRA = (1 << ISC11) + (1 << ISC10) + (1 << ISC01) + (0 < ISC00);
+    EIMSK = (1 << INT1) | (1 << INT0);
+
+    sei();
+
     while (1)
     {
-        short int smin, smax;
-        smin = PIND & SMIN;
-        smax = PIND & SMAX;
 
-        //SMAX INATIVO -> VALVULA E LED ENCHENDO ATIVOS
-        if(((smin != SMIN) && (smax != SMAX)) || ((smin == SMIN) && (smax != SMAX))){
-            PORTB |= (VALVULA + ENCHENDO);
-            PORTB &= ~CHEIO;
-        }
-        //SMIN E SMAX ATIVOS -> VALVULA E LED ENCHENDO DESLIGADOS
-        if((smin == SMIN) && (smax == SMAX)){
-            PORTB &= ~(VALVULA + ENCHENDO);
-            PORTB |= CHEIO;
-        }
     }
-    
-
+}
+//INTERRUPCOES
+ISR(INT0_vect){
+    PORTB |= (VALVULA + ENCHENDO);
+    PORTB &= ~CHEIO;
+}
+ISR(INT1_vect){
+    PORTB &= ~(VALVULA + ENCHENDO);
+    PORTB |= CHEIO;
 }
