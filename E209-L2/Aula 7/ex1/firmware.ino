@@ -5,10 +5,10 @@
 #define MF (1 << PB1)
 
 int main(void){
-    DDRD = (MA | MF);
-    PORTD &= ~(MA | MF);
+    DDRB = (MA | MF);
+    PORTB &= ~(MA | MF);
 
-    EICRA = (1 << ISC01) + (0 << ISC00);
+    EICRA = (1 << ISC01) + (1 << ISC00);
     EIMSK = (0 << INT1) | (1 << INT0);
 
     sei();
@@ -25,16 +25,18 @@ ISR(INT0_vect){
 
     //se ja estiver aberto
     if((sa == SA) && (sf != SF)){
-        PORTD &= ~MA;
-        PORTD |= MF;
+        PORTB &= ~MA;
+      	_delay_ms(500);
+        PORTB |= MF;
     }
     //se ja estiver fechado
-    if ((sa != SA) && (sf == SF)){
-        PORTD &= ~MF;
-        PORTD |= MA;
+    else if ((sa != SA) && (sf == SF)){
+        PORTB &= ~MF;
+        _delay_ms(500);
+        PORTB |= MA;
     }
-    //para o motor
+    //parar o motor
     else{
-        PORTD &= ~(MA + MF);
+        PORTB &= ~(MA + MF);
     }
 }
