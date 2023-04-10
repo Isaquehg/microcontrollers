@@ -6,6 +6,7 @@
 #define BTN2 (1 << PB2)//BOTAO 2 PCINT2
 #define BTN3 (1 << PD4)//BOTAO 3 PCINT20
 
+//PCMSK0
 ISR(PCINT0_vect){
     //Acender PD6 e PD7
     short int led2, led3;
@@ -21,6 +22,7 @@ ISR(PCINT0_vect){
     }
 
 }
+//PCMSK2
 ISR(PCINT2_vect){
     //Acender PB0
     short int led4;
