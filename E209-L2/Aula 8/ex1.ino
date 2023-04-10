@@ -18,7 +18,7 @@ ISR(PCINT2_vect){
 }
 ISR(PCINT20_vect){
     //Acender PB1
-    PORTD |= LED4;
+    PORTB |= LED4;
     _delay_ms(2000);
 }
 
