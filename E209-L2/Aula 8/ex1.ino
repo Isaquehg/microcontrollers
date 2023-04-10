@@ -9,25 +9,19 @@
 //PCMSK0
 ISR(PCINT0_vect){
     //Acender PD6 e PD7
-    short int led2, led3;
-    led2 = PIND & LED2;
-    led3 = PIND & LED3;
-    if(led2 == LED2){
+    if(PIND & PD6){
         PORTD |= LED2;
         _delay_ms(1000);
     }
-    if(led3 == LED3){
+    if(PIND & PD7){
         PORTD |= LED3;
         _delay_ms(500);
     }
-
 }
 //PCMSK2
 ISR(PCINT2_vect){
     //Acender PB0
-    short int led4;
-    led4 = PINB & LED4;
-    if(led4 == LED4){
+    if(PINDB & LED4){
         PORTB |= LED4;
         _delay(1000);
     }
