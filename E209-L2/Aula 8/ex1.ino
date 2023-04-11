@@ -9,30 +9,37 @@
 //PCMSK0
 ISR(PCINT0_vect){
     //Acender PD6 e PD7
-    if(PIND & PD6){
+    if(!(PINB & PB2)){
         PORTD |= LED2;
         _delay_ms(1000);
+        PORTD &= ~LED2;
     }
-    if(PIND & PD7){
+    else if(!(PINB & PB0)){
         PORTD |= LED3;
         _delay_ms(500);
+        PORTD &= ~LED3;
     }
 }
 //PCMSK2
 ISR(PCINT2_vect){
     //Acender PB0
-    if(PINDB & LED4){
+    if(!(PIND & PD4)){
         PORTB |= LED4;
-        _delay(1000);
+        _delay_ms(1000);
+        PORTB &= ~LED4;
     }
-
 }
 
 int main(void){
     //Habilitar saida LEDs
-    DDRB |= LED1 + LED2 + LED3 + LED4;
+    DDRD |= LED1 + LED2 + LED3;
+  	DDRB |= LED4;
     //Desativar LEDs
     PORTD &= ~(LED1 + LED2 + LED3);
+    PORTB &= ~LED4;
+  
+    PORTB |= BTN1 + BTN2;
+    PORTD |= BTN3;
 
     //Habilita interrupção no grupo PCINT2
     //PCIE0 -> PCMSK0
@@ -47,7 +54,7 @@ int main(void){
 
     while (1)
     {
-        PORTB ^= LED1;
+        PORTD ^= LED1;
         _delay_ms(250);
     }
 }
