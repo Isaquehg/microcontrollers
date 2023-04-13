@@ -1,4 +1,4 @@
-# Interrupção - ISR
+# Interrupção - INT0 & INT1
 É um recurso que permite interromper o fluxo de execução para atender uma demanda urgente
 ## Exemplos
 - Conversão concluída no ADC
@@ -45,3 +45,17 @@ INterrupção Externa do Pino PD3
                    1     0
                    0     1
                    1     1     -> Ambos habilitados
+
+# Interrupção PCINT
+Acontece em TODA mudança de estado!
+- PCICR: Utilizado para habilitar a interrupção no portal
+- PCMSKn: Especifica qual pino do portal terá interrupção
+        
+        PCICR = 0b  0  0  0  0  0  PCIE2  PCIE1 PCIE0
+        Portal:                      B      C     D
+
+        PCMSKn = 0b  Px7  Px6  Px5  Px4  Px3  Px2  Px1  Px0
+
+        n = 0 -> Portal B
+        n = 1 -> Portal C
+        n = 2 -> Portal D
