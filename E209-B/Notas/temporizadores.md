@@ -1,8 +1,9 @@
 # Temporizadores
 ## Modos
 - Normal
-- CTC: Valor é escolhido (interrupção controlada)
+- CTC: Interrupção por comparação (utilizado nas aulas) -> WSG00 = 0, WSG01 = 1
 - PWM: Gera forma de onda para controlar
+- PWM Fast
 
 ## Tipos ATMEGA32
 - TIMER0
@@ -12,7 +13,7 @@
 ## Contagem
 - contagem = (Tempo desejado/período de clock) - 1
 - Delay max, para clock 16 MHz:
-    - 8 bits: 16 microsegundos
+    - 8 bits: 16 us
     - 16 bits: 4 ms
 - Prescaler: Resolução X Duração (inversamente proporcionais)
 
@@ -63,3 +64,9 @@ Obs.: X pode ser 0, 1 ou 2
 
         7    6    5   4   3    2       1      0
         X    X    X   X   X  OCIE0B  OCIE0A  TOIE0
+
+## Passos
+1. Configurar o modo de operação do timer e o divisor de clock: TCCR0A e TCCR0B. 
+2. Configurar o valor máximo de contagem: OCR0A 
+3. Habilitar a interrupção do comparador desejado: TIMSK0 
+4. Habilitar a interrupção global do microcontrolador: sei(); 
