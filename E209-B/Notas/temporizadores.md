@@ -5,7 +5,7 @@
 - PWM: Gera forma de onda para controlar
 - PWM Fast
 
-## Tipos ATMEGA32
+## Timers ATMEGA32
 - TIMER0
 - TIMER1
 - TIMER2
