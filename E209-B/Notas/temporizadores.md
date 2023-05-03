@@ -69,4 +69,19 @@ Obs.: X pode ser 0, 1 ou 2
 1. Configurar o modo de operação do timer e o divisor de clock: TCCR0A e TCCR0B. 
 2. Configurar o valor máximo de contagem: OCR0A 
 3. Habilitar a interrupção do comparador desejado: TIMSK0 
-4. Habilitar a interrupção global do microcontrolador: sei(); 
+4. Habilitar a interrupção global do microcontrolador: sei();
+
+---
+
+
+# Fast PWM
+## Características
+- Começa em 1 no normal e 0 no PWM invertido
+- Utiliza apenas prescaler de 1024 para facilitar (TCCR0B = (1 << CS02) + (1 << CS00))
+- Ciclos a cada 16,384 ms
+
+## Configuração
+- TCCR0A = (1 << COM0A1) + (0 << COM0A0) + (1 << WGM01) + (1 << WGM00)
+- TCCR0B = (1 << CS02) + (1 << CS00)
+- OCR0A = int(DC) -> DEVE SER INT o valor do Duty Cycle (max = 255)
+
