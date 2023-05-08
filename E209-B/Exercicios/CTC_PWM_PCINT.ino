@@ -12,7 +12,6 @@ unsigned int cont = 0;//conta a cada 100us
 short int contTotal = 0;//conta segundos
 
 ISR(PCINT0_vect){
-    Serial.println("PCINT0");
     if(!(PINB & LIGA))
         TCCR2B = (1 << CS01);
     //Se desliga for pressionado
