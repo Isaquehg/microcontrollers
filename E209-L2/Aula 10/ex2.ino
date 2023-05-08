@@ -4,8 +4,8 @@
 float DC = 0;
 
 ISR(PCINT1_vect){
-    while (!(PINC & BOTAO)){
-        DC = 127.5;
+    if (!(PINC & BOTAO)){
+        DC += 25.5;
         if(DC > 255)
             DC = 0;
         OCR0A = int(DC);
@@ -14,7 +14,6 @@ ISR(PCINT1_vect){
         Serial.print("OCROA: ");
         Serial.println(OCR0A);
     }
-    OCR0A = 0;
 }
 
 int main(){
