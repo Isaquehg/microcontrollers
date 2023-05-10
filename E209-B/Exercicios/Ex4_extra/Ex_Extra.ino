@@ -66,7 +66,7 @@ int main() {
     OCR0A = 0;
 
     //Timer 2 - Temporizador CTC
-    TCCR2A = (1 << WGM01); //Configuração do modo de funcionamento para Comparador
+    TCCR2A = (1 << WGM21); //Configuração do modo de funcionamento para Comparador
     TCCR2B = 0; //Pre-scaler de 8 (Frequência de 2MHz - Período de 500 ns em cada contagem)
     OCR2A = 199; //200 contagens de 500 ns, o que gera uma interrupção a cada 100 us
     TIMSK2 = (1 << OCIE2A); //Gerar uma interrupção no estouro do comparador A
