@@ -3,7 +3,7 @@
 #define DESLIGA (1 << PB2)
 
 float DC = 0;//Duty Cycle
-unsigned int cont = 0;//conta a cada 100us
+unsigned long int cont = 0;//conta a cada 100us
 short int contTotal = 0;//conta segundos
 
 ISR(TIMER2_COMPA_vect) {
