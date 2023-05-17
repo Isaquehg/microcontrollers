@@ -1,9 +1,9 @@
 /*
-2. (Fácil) Elaborar um firmware para ler e apresentar na Serial um valor de temperatura que varia de 0 à 
-200°C de acordo com um transmissor de tensão padronizado de 0 à 5V colocado no PC2.
+3. (Médio) Elaborar um firmware para ler e apresentar na Serial a temperatura de um PT100 (sensor de 
+temperatura) operando em escala cheia transmitido por um transmissor de corrente padronizado de 4 
+à 20 mA, cuja corrente de saída alimenta um resistor de 250 Ohms colocado em paralelo ao pino PC1.
 */
-
-#define PINO 2
+#define PINO 1
 #define AMOSTRAS 50
 
 unsigned int Leitura_AD;
@@ -35,26 +35,7 @@ int main(){
 		
 		tensao = (Leitura_AD * 5) / 1023.0; //Cálculo da Tensão
 		
-		Serial.println(tensao * 40);
-		
-		//Leitura do ADC (Com média)
-		/*unsigned int SomaLeitura = 0, MediaLeitura;
-		for(int i=0; i < AMOSTRAS; i++){
-		
-			ADCSRA |= (1 << ADSC); //Inicia a conversão
-		
-			while((ADCSRA & (1<<ADSC)) == (1<<ADSC)); //Esperar a conversão
-		
-			Leitura_AD = ADC;
-			
-			SomaLeitura += Leitura_AD;
-		}
-		
-		MediaLeitura = SomaLeitura / AMOSTRAS;
-		
-		tensao = (MediaLeitura * 5) / 1023.0; //Cálculo da Tensão
-		
-		Serial.println(tensao);*/
+		Serial.println(tensao);
 	}
 	
 }
