@@ -28,7 +28,6 @@ int main(){
   	sei();
   
 	for(;;){
-	
 		//Determinar o pino de leitura
 		ADMUX = (ADMUX & 0xF8) | PINO;
 		
@@ -40,7 +39,7 @@ int main(){
 		
 		tensao = (Leitura_AD * 5) / 1023.0; //Cálculo da Tensão
 
-        OCR0A = int(tensao);
+        OCR0A = int(tensao * 51);//Enviar valor da conversão para PWM
 		
 		Serial.println(tensao);
         Serial.println(OCR0A);
