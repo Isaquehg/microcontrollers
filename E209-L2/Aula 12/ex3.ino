@@ -2,7 +2,7 @@
 Crie um programa que receba do computador o valor do DUTY CYCLE do PWM(0 a 100) e acione um LED verde de acordo com a potência.
 */
 
-#define BOTAO (1 << PD4)
+#define LED (1 << PD4)
 #define FOSC 16000000U //ClockSpeed
 #define BAUD 9600
 #define MYUBRR FOSC/16/BAUD-1
@@ -13,6 +13,7 @@ int pos_msg_rx = 0;
 int tamanho_msg_rx = 6;
 unsigned int x = 0, valor = 0;
 unsigned int pwm = 0;
+float DC = 0;
 
 ISR(USART_RX_vect){
   // Escreve o valor recebido pela UART na posição pos_msg_rx do buffer msg_rx 
@@ -43,10 +44,7 @@ void UART_Init(unsigned int ubrr){
 }
 
 int main(void){
-    vezes = 0;
-    PCICR = (1 << PCIE2);//habilita interrupção no portal B
-    PCMSK2 = BOTAO;
-    PORTD |= BOTAO;
+    PORTD |= LED;
 
     TCCR0A = (1<<COM0A1) + (1<<WGM01) + (1<<WGM00);
     TCCR0B = (1<<CS02) + (1<<CS00);
@@ -59,14 +57,17 @@ int main(void){
     UART_Transmit("Aperte o BOTAO:\n");
     //Super-loop
     while(1){
-        if((msg_rx[0]=='z')&&(msg_rx[1]=='e')&&(msg_rx[2]=='r')&&(msg_rx[3]=='a')&&(msg_rx[4]=='r')){
-            vezes = 0;
+        if(int(msg_rx[0]) < 255 && int(msg_rx[0]) > 0){
+            DC = (float) msg_rx[0];
+            OCR0A = int(DC);
         }
+        else
+            DC = 0;
         // O BOTAO foi pressionado?
         // Se sim, envia mensagem
         UART_Transmit("Contagem botao apertado\n");
         UART_Transmit("Num vezes BOTAO press:");
-        itoa(pwm, msg_tx, 10);
+        itoa((char)DC, msg_tx, 10);
         UART_Transmit(msg_tx);
         UART_Transmit("\n");
 
