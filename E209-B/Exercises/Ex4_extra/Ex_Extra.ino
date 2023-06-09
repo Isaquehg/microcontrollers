@@ -72,7 +72,7 @@ int main() {
     TIMSK2 = (1 << OCIE2A); //Gerar uma interrupção no estouro do comparador A
 
     //PCINT
-    PCICR = (1 << PCIE0);//habilita interrupções no portal B
+    PCICR = (1 << PCIE0);//habilita interrupções no portal A
     PCMSK0 = (LIGA + DESLIGA);
 
     sei();

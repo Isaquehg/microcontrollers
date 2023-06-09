@@ -15,7 +15,7 @@ int main(void){
     PORTD &= ~(M1 + ALARME + BUZZER + DESLIGA);
     PORTB &= ~LIGA;
 
-    PCICR = ((1 << PCIE0) + (1 << PCIE2));//habilita interrupção no portal B
+    PCICR = ((1 << PCIE0) + (1 << PCIE2));//habilita interrupção nos protais A e C
     PCMSK0 = S1 + S2;
     PCMSK2 = S3;
 

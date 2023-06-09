@@ -22,9 +22,9 @@
     Prescaler    Freq. Clock    Período   Delay Max (8 bits)
     1             16 MHz       62,5ns     16 us
     8             2  MHz       500 ns     128 us
-    64            250 kHz      4 micro    1024 us
-    256           62,5 kHz     16 micro   4096 us
-    1024          15,625 kHz   64 micro   16384 us
+    64            250 kHz      4 us       1024 us
+    256           62,5 kHz     16 us      4,096 ms
+    1024          15,625 kHz   64 us      16,384 ms
 
 Obs.: Para escolher o prescaler, o delay desejado deve ser divisível pelo periodo do prescaler!!
 
