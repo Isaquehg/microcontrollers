@@ -38,7 +38,7 @@ int main(){
 		
 			ADCSRA |= (1 << ADSC); //Inicia a conversão
 		
-			while((ADCSRA & (1<<ADSC)) == (1<<ADSC)); //Esperar a conversão
+			while((ADCSRA & (1 << ADSC)) == (1 << ADSC)); //Esperar a conversão
 		
 			Leitura_AD = ADC;
 			

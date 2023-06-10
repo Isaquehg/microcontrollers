@@ -13,9 +13,9 @@ int main(){
   PORTD &= ~MOTOR;
   
   // OC0A limpo na comparação e modo Fast-PWM ativado
-  TCCR0A = (1<<COM0A1) + (0<<COM0A0) + (1<<WGM01) + (1<<WGM00);
+  TCCR0A = (1 << COM0A1) + (0 << COM0A0) + (1 << WGM01) + (1 << WGM00);
   // Pre-scaler de 1024 (Maior possível em PWM)
-  TCCR0B = (1<<CS02) + (1<<CS00);
+  TCCR0B = (1 << CS02) + (1 << CS00);
   // Zerar no começo
   OCR0A = 0;
   
