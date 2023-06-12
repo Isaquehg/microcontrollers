@@ -74,13 +74,21 @@ int main(){
         int x;// Verificação de recebimento
         if(change){
             // Confirmar recebimento msg volume
+            int aux_0, aux_1, aux_2;
             x = 0;
+            UART_Transmit("Entre com o Volume: \n");
             while (x == 0) {
-                UART_Transmit("Entre com o Volume: \n");
-                if ((msg_rx[0] != NULL) && (msg_rx[1] != NULL) && (msg_rx[2] != NULL)) {
+                // Conversao
+                itoa(aux_0, msg_rx[0], 10);
+                itoa(aux_1, msg_rx[0], 10);
+                itoa(aux_2, msg_rx[0], 10);
+
+                if ((aux_0 < 10) && (aux_0 >= 0) && (aux_1 < 10) && (aux_1 >= 0) && (aux_2 < 10) && (aux_2 >= 0)) {
                     x = 1;
                 }
             }
+            UART_Transmit("aqui");
+            UART_Transmit("\n");
 
             // Atribuir volume
             volume[0] = msg_rx[0];
@@ -92,12 +100,18 @@ int main(){
             
             // Confirmar recebimento msg tempo desejado
             x = 0;
+            UART_Transmit("Entre com o Tempo de Infusao em minutos: ");
             while (x == 0) {
-                UART_Transmit("Entre com o Tempo de Infusao em minutos: ");
-                if ((msg_rx[0] != NULL) && (msg_rx[1] != NULL) && (msg_rx[2] != NULL)) {
+                // Conversao
+                itoa(aux_0, msg_rx[0], 10);
+                itoa(aux_1, msg_rx[0], 10);
+                itoa(aux_2, msg_rx[0], 10);
+
+                if ((aux_0 < 10) && (aux_0 >= 0) && (aux_1 < 10) && (aux_1 >= 0) && (aux_2 < 10) && (aux_2 >= 0)) {
                     x = 1;
                 }
             }
+            UART_Transmit(msg_rx);
             UART_Transmit("\n");
 
             // Atribuir tempo
@@ -170,8 +184,8 @@ int main(){
 		tensao = (Leitura_AD * 5) / 1023.0; //Cálculo da Tensão
         float dist = (tensao * 20) / 5.0;// Calculo da distancia
 
-        // Se detectado algo a mais de 5cm e menos de 20cm
-        if((tensao < 3.75) || (tensao > 0)){
+        // Se detectado algo a menos de 5cm
+        if(dist < 5){
             PORTD |= BUZZER;
             OCR0A = 0;
             UART_Transmit("Bolhas detectadas! \n");
