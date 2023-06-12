@@ -81,7 +81,7 @@ int main(){
                 // Conversao
                 itoa(aux_rx, msg_rx[0], 10);
 
-                if ((aux_rx < 10) && (aux_rx > 0)) {
+                if ((aux_rx < 999) && (aux_rx > 0)) {
                     x = 1;
                 }
             }
@@ -97,14 +97,13 @@ int main(){
             msg_rx[2] = 0;
             
             // Confirmar recebimento msg volume
-            int aux_rx;
             x = 0;
             UART_Transmit("Entre com o Volume: \n");
             while (x == 0) {
                 // Conversao
                 itoa(aux_rx, msg_rx[0], 10);
 
-                if ((aux_rx < 10) && (aux_rx > 0)) {
+                if ((aux_rx < 999) && (aux_rx > 0)) {
                     x = 1;
                 }
             }
