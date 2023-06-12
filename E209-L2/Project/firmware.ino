@@ -46,7 +46,7 @@ int main(){
     // Habilitando saidas e pull-up
     DDRD |= (MOTOR + BUZZER);
     PORTD &= ~(MOTOR + BUZZER);
-    PORTD &= ~SGOTAS;
+    PORTD |= ~SGOTAS;
 
     // INT0(PD2) - Falling edge
     EICRA = (1 << ISC01) + (0 << ISC00);
