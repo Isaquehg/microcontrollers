@@ -15,7 +15,7 @@
 #define FOSC 16000000U
 #define BAUD 9600
 #define MYUBRR FOSC / 16 / (BAUD - 1)
-#define TAMANHO 4
+#define TAMANHO 8
 
 // Max. vazão motor a 100% PWM
 #define MAX_MOTOR 450 / 60.0
@@ -112,8 +112,6 @@ int main(){
             }
             UART_Transmit(msg_rx);
             UART_Transmit("\n");
-            Serial.println(volume);
-            Serial.println(time);
 
             // Resetar msg_rx
             time = aux_rx;
