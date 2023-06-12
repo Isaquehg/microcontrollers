@@ -1,6 +1,7 @@
 //Declarações para UART
 #include <stdio.h>
 #include <stdlib.h>
+#include <Arduino.h>
 
 // Input
 #define SGOTAS PD2
@@ -82,9 +83,11 @@ int main(){
             UART_Transmit("Entre com o Volume: \n");
             while (x == 0) {
                 // Conversao
-                aux_rx = atoi(msg_rx);
+                char x[3] = msg_rx[0] + msg_rx[1] + msg_rx[2];
+                UART_Transmit(x);
+                aux_rx = atoi(x);
 
-                if ((aux_rx < 999) && (aux_rx > 100)) {
+                if ((aux_rx <= 999) && (aux_rx >= 100)) {
                     x = 1;
                 }
             }
