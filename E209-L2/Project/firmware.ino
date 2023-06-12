@@ -43,6 +43,11 @@ int main(){
 	//Serial.begin(BAUD);
 	UART_config(MYUBRR);
 
+    // Habilitando saidas e pull-up
+    DDRD |= (MOTOR + BUZZER);
+    PORTD &= ~(MOTOR + BUZZER);
+    PORTD &= ~SGOTAS;
+
     // INT0(PD2) - Falling edge
     EICRA = (1 << ISC01) + (0 << ISC00);
     EIMSK = (1 << INT0);
@@ -60,9 +65,7 @@ int main(){
 
     // ADC
     ADMUX = (0 << REFS1) + (1 << REFS0); //Utiliza 5V como referência (1023)
-	
 	ADCSRA = (1 << ADEN) + (1 << ADPS2) + (1 << ADPS1) + (1 << ADPS0); //Habilita ADC e PS 128 (10 bits)
-	
 	ADCSRB = 0; //Conversão Única
 	
 	sei();
