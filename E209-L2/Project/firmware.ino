@@ -82,8 +82,7 @@ int main(){
             UART_Transmit("Entre com o Volume: \n");
             while (x == 0) {
                 // Conversao
-                itoa(aux_rx, msg_rx[0], 10);
-                printf("%d", aux_rx);
+                aux_rx = atoi(msg_rx);
 
                 if ((aux_rx < 999) && (aux_rx > 100)) {
                     x = 1;
@@ -105,7 +104,7 @@ int main(){
             UART_Transmit("Entre com o Volume: \n");
             while (x == 0) {
                 // Conversao
-                itoa(aux_rx, msg_rx[0], 10);
+                itoa(aux_rx, msg_rx, 10);
 
                 if ((aux_rx < 999) && (aux_rx > 0)) {
                     x = 1;
