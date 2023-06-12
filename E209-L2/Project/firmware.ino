@@ -74,16 +74,14 @@ int main(){
         int x;// Verificação de recebimento
         if(change){
             // Confirmar recebimento msg volume
-            int aux_0, aux_1, aux_2;
+            int aux_rx;
             x = 0;
             UART_Transmit("Entre com o Volume: \n");
             while (x == 0) {
                 // Conversao
-                itoa(aux_0, msg_rx[0], 10);
-                itoa(aux_1, msg_rx[0], 10);
-                itoa(aux_2, msg_rx[0], 10);
+                itoa(aux_rx, msg_rx[0], 10);
 
-                if ((aux_0 < 10) && (aux_0 >= 0) && (aux_1 < 10) && (aux_1 >= 0) && (aux_2 < 10) && (aux_2 >= 0)) {
+                if ((aux_rx < 10) && (aux_rx > 0)) {
                     x = 1;
                 }
             }
@@ -98,16 +96,15 @@ int main(){
             msg_rx[1] = 0;
             msg_rx[2] = 0;
             
-            // Confirmar recebimento msg tempo desejado
+            // Confirmar recebimento msg volume
+            int aux_rx;
             x = 0;
-            UART_Transmit("Entre com o Tempo de Infusao em minutos: ");
+            UART_Transmit("Entre com o Volume: \n");
             while (x == 0) {
                 // Conversao
-                itoa(aux_0, msg_rx[0], 10);
-                itoa(aux_1, msg_rx[0], 10);
-                itoa(aux_2, msg_rx[0], 10);
+                itoa(aux_rx, msg_rx[0], 10);
 
-                if ((aux_0 < 10) && (aux_0 >= 0) && (aux_1 < 10) && (aux_1 >= 0) && (aux_2 < 10) && (aux_2 >= 0)) {
+                if ((aux_rx < 10) && (aux_rx > 0)) {
                     x = 1;
                 }
             }
