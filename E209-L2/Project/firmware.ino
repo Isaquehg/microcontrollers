@@ -34,8 +34,8 @@ unsigned int segundos = 0; // Intervalo entre gotas
 unsigned int Leitura_AD; // ADC
 float tensao; // Tensao Ultrassonico
 float ml = n_gotas / 20.0; // ml recebido
-unsigned char volume[3]; // Desired volume
-unsigned char time[3]; // Tempo de injeção
+unsigned char volume[4]; // Desired volume
+unsigned char time[4]; // Tempo de injeção
 bool change = true; // Alterar parametros = true
 bool iniciado = false; // Momento de iniciar a contagem de tempo
 
