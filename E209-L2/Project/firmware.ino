@@ -35,8 +35,8 @@ unsigned int segundos = 0; // Intervalo entre gotas
 unsigned int Leitura_AD; // ADC
 float tensao; // Tensao Ultrassonico
 float ml = n_gotas / 20.0; // ml recebido
-unsigned char volume[4]; // Desired volume
-unsigned char time[4]; // Tempo de injeção
+unsigned int volume; // Desired volume
+unsigned int time; // Tempo de injeção
 bool change = true; // Alterar parametros = true
 bool iniciado = false; // Momento de iniciar a contagem de tempo
 
@@ -77,15 +77,13 @@ int main(){
 	for(;;){
         int x;// Verificação de recebimento
         if(change){
-            // Confirmar recebimento msg volume
+            // Confirmar recebimento msg Volume
             int aux_rx;
             x = 0;
             UART_Transmit("Entre com o Volume: \n");
             while (x == 0) {
                 // Conversao
-                char x[3] = msg_rx[0] + msg_rx[1] + msg_rx[2];
-                UART_Transmit(x);
-                aux_rx = atoi(x);
+                aux_rx = (msg_rx[0] - 48) * 100 + (msg_rx[1] - 48) * 10 + msg_rx[2] - 48;
 
                 if ((aux_rx <= 999) && (aux_rx >= 100)) {
                     x = 1;
@@ -95,21 +93,19 @@ int main(){
             UART_Transmit("\n");
 
             // Atribuir volume
-            volume[0] = msg_rx[0];
-            volume[1] = msg_rx[1];
-            volume[2]= msg_rx[2];
+            volume = aux_rx;
             msg_rx[0] = '\0';
             msg_rx[1] = '\0';
             msg_rx[2] = '\0';
             
-            // Confirmar recebimento msg volume
+            // Confirmar recebimento msg Tempo Infusao
             x = 0;
-            UART_Transmit("Entre com o Volume: \n");
+            UART_Transmit("Entre com o tempo de infusao: \n");
             while (x == 0) {
                 // Conversao
-                itoa(aux_rx, msg_rx, 10);
+                aux_rx = (msg_rx[0] - 48) * 100 + (msg_rx[1] - 48) * 10 + msg_rx[2] - 48;
 
-                if ((aux_rx < 999) && (aux_rx > 0)) {
+                if ((aux_rx <= 999) && (aux_rx >= 100)) {
                     x = 1;
                 }
             }
@@ -117,23 +113,13 @@ int main(){
             UART_Transmit("\n");
 
             // Atribuir tempo
-            time[0] = msg_rx[0];
-            time[1] = msg_rx[1];
-            time[2]= msg_rx[2];
+            time = aux_rx;
             msg_rx[0] = '\0';
             msg_rx[1] = '\0';
             msg_rx[2] = '\0';
         }
-
-        // Convert time char to int
-        int time_min_int;
-		itoa(time_min_int, time, 10);
-        // Convert volume char to int
-        int volume_int;
-        itoa(volume_int, volume, 10);
-
         // Calculating defined flux
-        float fluxo_definido = volume_int / time_min_int * 1.0;
+        float fluxo_definido = volume / time * 1.0;
 
         // Calculating DC needed
         float DC = (fluxo_definido * 100) / 450.0;
