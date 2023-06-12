@@ -87,13 +87,13 @@ int main(){
 
                 if ((aux_rx <= 999) && (aux_rx >= 100)) {
                     x = 1;
+                    volume = aux_rx;
                 }
             }
-            UART_Transmit("aqui");
+            UART_Transmit(msg_rx);
             UART_Transmit("\n");
 
-            // Atribuir volume
-            volume = aux_rx;
+            // Resetar msg_rx
             msg_rx[0] = '\0';
             msg_rx[1] = '\0';
             msg_rx[2] = '\0';
@@ -107,12 +107,15 @@ int main(){
 
                 if ((aux_rx <= 999) && (aux_rx >= 100)) {
                     x = 1;
+                    time = aux_rx;
                 }
             }
             UART_Transmit(msg_rx);
             UART_Transmit("\n");
+            Serial.println(volume);
+            Serial.println(time);
 
-            // Atribuir tempo
+            // Resetar msg_rx
             time = aux_rx;
             msg_rx[0] = '\0';
             msg_rx[1] = '\0';
