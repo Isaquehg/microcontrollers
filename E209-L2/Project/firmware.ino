@@ -42,6 +42,9 @@ bool iniciado = false; // Momento de iniciar a contagem de tempo
 int main(){
 	//Serial.begin(BAUD);
 	UART_config(MYUBRR);
+    msg_rx[0] = '\0';
+    msg_rx[1] = '\0';
+    msg_rx[2] = '\0';
 
     // Habilitando saidas e pull-up
     DDRD |= (MOTOR + BUZZER);
@@ -80,8 +83,9 @@ int main(){
             while (x == 0) {
                 // Conversao
                 itoa(aux_rx, msg_rx[0], 10);
+                printf("%d", aux_rx);
 
-                if ((aux_rx < 999) && (aux_rx > 0)) {
+                if ((aux_rx < 999) && (aux_rx > 100)) {
                     x = 1;
                 }
             }
@@ -92,9 +96,9 @@ int main(){
             volume[0] = msg_rx[0];
             volume[1] = msg_rx[1];
             volume[2]= msg_rx[2];
-            msg_rx[0] = 0;
-            msg_rx[1] = 0;
-            msg_rx[2] = 0;
+            msg_rx[0] = '\0';
+            msg_rx[1] = '\0';
+            msg_rx[2] = '\0';
             
             // Confirmar recebimento msg volume
             x = 0;
@@ -114,9 +118,9 @@ int main(){
             time[0] = msg_rx[0];
             time[1] = msg_rx[1];
             time[2]= msg_rx[2];
-            msg_rx[0] = 0;
-            msg_rx[1] = 0;
-            msg_rx[2] = 0;
+            msg_rx[0] = '\0';
+            msg_rx[1] = '\0';
+            msg_rx[2] = '\0';
         }
 
         // Convert time char to int
