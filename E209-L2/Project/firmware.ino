@@ -130,6 +130,10 @@ int main() {
         }
         // Calculating defined flux
         fluxo_definido = volume / tempo * 1.0;
+        itoa(fluxo_definido, msg_tx, 10);
+        UART_Transmit("Defined flux: ");
+        UART_Transmit(msg_tx);
+        UART_Transmit("\n");
 
         // Calculating DC needed
         DC = (fluxo_definido * 100) / 450.0;
@@ -141,7 +145,14 @@ int main() {
         UART_Transmit("Detectar gotas...");
         while(iniciado == false){
             if(n_gotas >= 2){
+                _delay_ms(1000);
                 fluxo_real = (n_gotas / segundos) * 1.0;
+                itoa(fluxo_real, msg_tx, 10);
+                UART_Transmit("\n real flux: ");
+                UART_Transmit(msg_tx);
+                UART_Transmit("\n n_gotas: ");
+                itoa(n_gotas, msg_tx, 10);
+                UART_Transmit(msg_tx);
             }
         }
 
@@ -150,7 +161,7 @@ int main() {
         n_gotas = 0;
         segundos = 0;
         iniciado = false;
-        UART_Transmit("Parou gotas");
+        UART_Transmit("\n Parou gotas");
         UART_Transmit("\n");
 
         // Calculo de Erro
@@ -203,7 +214,7 @@ int main() {
 
 // Conta-gotas
 ISR(INT0_vect) {
-    UART_Transmit("Hello");
+    UART_Transmit("Hello \n");
     if (n_gotas == 0) {
         TCCR0B = (1 << CS01); // Ativar timer com pre-scaler de 8(f = 2MHz, t = 500ns)
     }
