@@ -149,6 +149,7 @@ int main() {
         TCCR0B = 0;// Desativar timer
         n_gotas = 0;
         segundos = 0;
+        iniciado = false;
         UART_Transmit("Parou gotas");
 
         // Calculo de Erro
@@ -161,6 +162,7 @@ int main() {
         UART_Transmit("% \n");
 
         // Verificar se usuário deseja modificar dados inseridos
+        fase = 2;
         UART_Transmit("Deseja alterar os dados inseridos[s/n]? \n");
         while (fase == 2) {
             if (msg_rx[0] == 's') {
