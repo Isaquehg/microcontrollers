@@ -151,6 +151,7 @@ int main() {
         segundos = 0;
         iniciado = false;
         UART_Transmit("Parou gotas");
+        UART_Transmit("\n");
 
         // Calculo de Erro
         erro = ((fluxo_real - fluxo_definido) / fluxo_definido) * 100;
