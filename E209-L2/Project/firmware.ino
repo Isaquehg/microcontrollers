@@ -142,11 +142,12 @@ int main() {
         while(iniciado == false){
             if(n_gotas >= 2){
                 fluxo_real = (n_gotas / segundos) * 1.0;
-                // Voltar ao estado inicial
-                TCCR0B = 0;// Desativar timer
-                n_gotas = 0;
             }
         }
+
+        // Voltar ao estado inicial
+        TCCR0B = 0;// Desativar timer
+        n_gotas = 0;
         segundos = 0;
         UART_Transmit("Parou gotas");
 
@@ -154,13 +155,12 @@ int main() {
         erro = ((fluxo_real - fluxo_definido) / fluxo_definido) * 100;
         itoa(erro, msg_tx, 10);
 
-        // Conversion & Output
+        // Output
         UART_Transmit("Erro: ");
         UART_Transmit(msg_tx);
         UART_Transmit("% \n");
 
         // Verificar se usuário deseja modificar dados inseridos
-        // x = 0;
         UART_Transmit("Deseja alterar os dados inseridos[s/n]? \n");
         while (fase == 2) {
             if (msg_rx[0] == 's') {
