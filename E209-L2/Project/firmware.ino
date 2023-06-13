@@ -146,12 +146,15 @@ int main() {
         while(iniciado == false){
             if(n_gotas >= 2){
                 _delay_ms(1000);
-                fluxo_real = (n_gotas / segundos) * 1.0;
+                fluxo_real = (n_gotas / segundos) * 0.05;
                 itoa(fluxo_real, msg_tx, 10);
-                UART_Transmit("\n real flux: ");
+                UART_Transmit("\nreal flux int: ");
                 UART_Transmit(msg_tx);
-                UART_Transmit("\n n_gotas: ");
+                UART_Transmit("\nn_gotas: ");
                 itoa(n_gotas, msg_tx, 10);
+                UART_Transmit(msg_tx);
+                UART_Transmit("\nsegundos: ");
+                itoa(segundos, msg_tx, 10);
                 UART_Transmit(msg_tx);
             }
         }
@@ -161,7 +164,7 @@ int main() {
         n_gotas = 0;
         segundos = 0;
         iniciado = false;
-        UART_Transmit("\n Parou gotas");
+        UART_Transmit("\nParou gotas");
         UART_Transmit("\n");
 
         // Calculo de Erro
