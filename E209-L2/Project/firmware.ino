@@ -21,7 +21,7 @@
 
 // UART variables
 char msg_tx[38];
-char msg_rx[20];
+char msg_rx[4];
 int pos_msg_rx = 0;
 int tamanho_msg_rx = TAMANHO;
 
@@ -38,8 +38,8 @@ unsigned int tempo; // Tempo de injeção
 bool change = true; // Alterar parametros = true
 bool iniciado = false; // Momento de iniciar a contagem de tempo
 
-float fluxo_definido;
-float fluxo_real;
+float fluxo_definido = 0;
+float fluxo_real = 0;
 float DC;
 int aux_rx = 0;
 int fase = 0;// Verificação de recebimento
@@ -58,7 +58,7 @@ int main() {
   PORTD |= SGOTAS;
 
   // INT0(PD2) - Falling edge
-  EICRA = (1 << ISC01) + (0 << ISC00);
+  EICRA = (1 << ISC01);
   EIMSK = (1 << INT0);
 
   // Timer 0 - CTC
@@ -143,20 +143,17 @@ int main() {
         // Calcular fluxo real
         UART_Transmit("Detectar gotas...");
         while(iniciado == false){
-            if(n_gotas >= 2){
-                _delay_ms(1000);
-                fluxo_real = (n_gotas / segundos) * 0.05;
-                itoa(fluxo_real, msg_tx, 10);
-                UART_Transmit("\nFluxo Real int: ");
-                UART_Transmit(msg_tx);
-                UART_Transmit("\nNum Gotas: ");
-                itoa(n_gotas, msg_tx, 10);
-                UART_Transmit(msg_tx);
-                UART_Transmit("\nSegundos: ");
-                itoa(segundos, msg_tx, 10);
-                UART_Transmit(msg_tx);
-            }
             _delay_ms(1000);
+            fluxo_real = (n_gotas / segundos) * 0.05;
+            itoa(fluxo_real, msg_tx, 10);
+            UART_Transmit("\nFluxo Real int: ");
+            UART_Transmit(msg_tx);
+            UART_Transmit("\nNum Gotas: ");
+            itoa(n_gotas, msg_tx, 10);
+            UART_Transmit(msg_tx);
+            UART_Transmit("\nSegundos: ");
+            itoa(segundos, msg_tx, 10);
+            UART_Transmit(msg_tx);
             UART_Transmit("\n no loop... \n");
         }
 
@@ -226,7 +223,7 @@ ISR(INT0_vect) {
     if (n_gotas == 0) {
         TCCR0B = (1 << CS01); // Ativar timer com pre-scaler de 8(f = 2MHz, t = 500ns)
     }
-    else {
+    else if (n_gotas >= 2) {
         iniciado = true;
     }
     n_gotas ++;
