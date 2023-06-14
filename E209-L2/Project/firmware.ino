@@ -197,20 +197,24 @@ int main() {
         msg_rx[2] = '\0';
 
         // Detecção de bolhas
-        /*ADMUX = (ADMUX & 0xF8) | ULTRASONIC; // Determinar o pino de leitura
+        ADMUX = (ADMUX & 0xF8) | ULTRASONIC; // Determinar o pino de leitura
         ADCSRA |= (1 << ADSC); //Inicia a conversão
         while ((ADCSRA & (1 << ADSC)) == (1 << ADSC)); //Esperar a conversão
         Leitura_AD = ADC; //Armazenamento da leitura
 
         tensao = (Leitura_AD * 5) / 1023.0; //Cálculo da Tensão
         dist = (tensao * 20) / 5.0;// Calculo da distancia
+        itoa(dist, msg_tx, 10);
+        UART_Transmit("\n Dist int:");
+        UART_Transmit(msg_tx);
+        UART_Transmit("\n");
 
         // Se detectado algo a menos de 5cm
         if (dist < 5) {
             PORTD |= BUZZER;
             OCR0A = 0;
             UART_Transmit("Bolhas detectadas! \n");
-        }*/
+        }
     }
 }
 
