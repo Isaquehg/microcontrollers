@@ -33,7 +33,6 @@ unsigned int n_gotas = 0; // Numero de gotas detectadas
 unsigned int segundos = 0; // Intervalo entre gotas
 unsigned int Leitura_AD; // ADC
 float tensao; // Tensao Ultrassonico
-float ml = n_gotas / 20.0; // ml recebido
 unsigned int volume; // Desired volume
 unsigned int tempo; // Tempo de injeção
 bool change = true; // Alterar parametros = true
@@ -56,7 +55,7 @@ int main() {
   // Habilitando saidas e pull-up
   DDRD |= (MOTOR + BUZZER);
   PORTD &= ~(MOTOR + BUZZER);
-  PORTD = SGOTAS;
+  PORTD |= SGOTAS;
 
   // INT0(PD2) - Falling edge
   EICRA = (1 << ISC01) + (0 << ISC00);
@@ -69,6 +68,7 @@ int main() {
   TIMSK0 = (1 << OCIE0A);
 
   // Timer 2 - Fast-PWM
+  // VER QUESTAO COMPARADOR A!!
   TCCR2A = (1 << COM2A1) | (0 << COM2A0) | (1 << WGM21) | (1 << WGM20);
   TCCR2B = (1 << CS22) | (1 << CS21) | (1 << CS20); // Pre-scaler de 1024
   OCR2A = 0;
@@ -130,7 +130,7 @@ int main() {
         // Calculating defined flux
         fluxo_definido = volume / tempo * 1.0;
         itoa(fluxo_definido, msg_tx, 10);
-        UART_Transmit("Defined flux: ");
+        UART_Transmit("Fluxo Definido: ");
         UART_Transmit(msg_tx);
         UART_Transmit("\n");
 
@@ -147,15 +147,17 @@ int main() {
                 _delay_ms(1000);
                 fluxo_real = (n_gotas / segundos) * 0.05;
                 itoa(fluxo_real, msg_tx, 10);
-                UART_Transmit("\nreal flux int: ");
+                UART_Transmit("\nFluxo Real int: ");
                 UART_Transmit(msg_tx);
-                UART_Transmit("\nn_gotas: ");
+                UART_Transmit("\nNum Gotas: ");
                 itoa(n_gotas, msg_tx, 10);
                 UART_Transmit(msg_tx);
-                UART_Transmit("\nsegundos: ");
+                UART_Transmit("\nSegundos: ");
                 itoa(segundos, msg_tx, 10);
                 UART_Transmit(msg_tx);
             }
+            _delay_ms(1000);
+            UART_Transmit("\n no loop... \n");
         }
 
         // Voltar ao estado inicial
@@ -205,7 +207,7 @@ int main() {
         tensao = (Leitura_AD * 5) / 1023.0; //Cálculo da Tensão
         dist = (tensao * 20) / 5.0;// Calculo da distancia
         itoa(dist, msg_tx, 10);
-        UART_Transmit("\n Dist int:");
+        UART_Transmit("\nDist int:");
         UART_Transmit(msg_tx);
         UART_Transmit("\n");
 
@@ -220,15 +222,18 @@ int main() {
 
 // Conta-gotas
 ISR(INT0_vect) {
-    UART_Transmit("Hello \n");
+    // Contar a partir de 2 gotas
     if (n_gotas == 0) {
         TCCR0B = (1 << CS01); // Ativar timer com pre-scaler de 8(f = 2MHz, t = 500ns)
     }
-    // Contar a partir de 2 gotas
     else {
         iniciado = true;
     }
     n_gotas ++;
+    UART_Transmit("Num Gotas:");
+    itoa(n_gotas, msg_tx, 10);
+    UART_Transmit(msg_tx);
+    UART_Transmit("\n");
 }
 
 // Timer 0 - Entra a cada 100us
