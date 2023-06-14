@@ -1,7 +1,6 @@
 //Declarações para UART
 #include <stdio.h>
 #include <stdlib.h>
-#include <Arduino.h>
 
 // Input
 #define SGOTAS (1 << PD2)
