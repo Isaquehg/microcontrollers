@@ -104,13 +104,12 @@ int main() {
             pos_msg_rx = 0;
             
             // Confirmar recebimento msg Tempo Infusao
-            UART_Transmit("Entre com o Tempo Infusao em minutos");
+            UART_Transmit("Entre com o Tempo Infusao em minutos \n");
             while (fase == 1) {
                 _delay_ms(1000);
                 // Conversao p/ int
                 aux_rx = (msg_rx[0] - 48) * 100 + (msg_rx[1] - 48) * 10 + (msg_rx[2] - 48);
                 if ((aux_rx <= 999) && (aux_rx >= 100)) {
-                    UART_Transmit("\n");
                     UART_Transmit(msg_rx);
                     UART_Transmit("\n");
                     fase ++;
@@ -128,7 +127,7 @@ int main() {
             change = false;
         }
         // Calculating defined flux
-        fluxo_definido = volume / tempo * 1.0;
+        fluxo_definido = (volume * 60) / tempo * 1.0;
         itoa(fluxo_definido, msg_tx, 10);
         UART_Transmit("Fluxo Definido: ");
         UART_Transmit(msg_tx);
@@ -140,11 +139,11 @@ int main() {
         // Ligar motor com potencia definida
         OCR2A = int(DC);
         
-        // Calcular fluxo real
+        // Calcular fluxo real [ml/h]
         UART_Transmit("Detectar gotas...");
         while(iniciado == false){
             _delay_ms(1000);
-            fluxo_real = (n_gotas / segundos) * 0.05;
+            fluxo_real = ((n_gotas * 60) / segundos) * 0.05;
             itoa(fluxo_real, msg_tx, 10);
             UART_Transmit("\nFluxo Real int: ");
             UART_Transmit(msg_tx);
@@ -166,7 +165,7 @@ int main() {
         UART_Transmit("\n");
 
         // Calculo de Erro
-        erro = ((fluxo_real - fluxo_definido) / fluxo_definido) * 100;
+        erro = ((fluxo_real - fluxo_definido) / fluxo_definido) * 1.0;
         itoa(erro, msg_tx, 10);
 
         // Output
