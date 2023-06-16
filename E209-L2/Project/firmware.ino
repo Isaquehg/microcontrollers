@@ -70,7 +70,7 @@ int main() {
   // Timer 2 - Fast-PWM
   // VER QUESTAO COMPARADOR A!!
   TCCR2A = (1 << COM2A1) | (0 << COM2A0) | (1 << WGM21) | (1 << WGM20);
-  TCCR2B = (1 << CS22) | (1 << CS21) | (1 << CS20); // Pre-scaler de 1024
+  TCCR2B = (1 << CS22) | (1 << CS20); // Pre-scaler de 1024
   OCR2A = 0;
 
   // ADC
@@ -84,48 +84,48 @@ int main() {
             // Confirmar recebimento msg Volume
             UART_Transmit("Entre com o Volume: \n");
             while (fase == 0) {
-                _delay_ms(1000);
+                _delay_ms(100);
                 // Conversao p/ int
                 aux_rx = (msg_rx[0] - 48) * 100 + (msg_rx[1] - 48) * 10 + (msg_rx[2] - 48);
                 if ((aux_rx <= 999) && (aux_rx >= 100)) {
-                    UART_Transmit(msg_rx);
-                    UART_Transmit("\n");
                     fase ++;
-                    // Atribuir volume
-                    volume = aux_rx;
-                    // Resetar msg_rx
-                    msg_rx[0] = '\0';
-                    msg_rx[1] = '\0';
-                    msg_rx[2] = '\0';
-                    aux_rx = 0;
                 }
             }
-
+            // Atribuir volume
+            volume = aux_rx;
+            itoa(volume, msg_tx, 10);
+            UART_Transmit(msg_tx);
+            UART_Transmit("\n");
+            // Resetar msg_rx
+            msg_rx[0] = '\0';
+            msg_rx[1] = '\0';
+            msg_rx[2] = '\0';
+            aux_rx = 0;
+                
             pos_msg_rx = 0;
-            
+            //fazer o mesmo abaixo se funcionar
             // Confirmar recebimento msg Tempo Infusao
             UART_Transmit("Entre com o Tempo Infusao em minutos \n");
             while (fase == 1) {
-                _delay_ms(1000);
+                _delay_ms(100);
                 // Conversao p/ int
                 aux_rx = (msg_rx[0] - 48) * 100 + (msg_rx[1] - 48) * 10 + (msg_rx[2] - 48);
                 if ((aux_rx <= 999) && (aux_rx >= 100)) {
-                    UART_Transmit(msg_rx);
-                    UART_Transmit("\n");
                     fase ++;
-                    // Atribuir tempo
-                    tempo = aux_rx;
-                    // Resetar msg_rx
-                    msg_rx[0] = '\0';
-                    msg_rx[1] = '\0';
-                    msg_rx[2] = '\0';
-                    aux_rx = 0;
                 }
             }
-
             // Sair do loop
             change = false;
         }
+        UART_Transmit(msg_rx);
+        UART_Transmit("\n");
+        // Atribuir tempo
+        tempo = aux_rx;
+        // Resetar msg_rx
+        msg_rx[0] = '\0';
+        msg_rx[1] = '\0';
+        msg_rx[2] = '\0';
+        aux_rx = 0;
         // Calculating defined flux
         fluxo_definido = (volume * 60) / tempo * 1.0;
         itoa(fluxo_definido, msg_tx, 10);
