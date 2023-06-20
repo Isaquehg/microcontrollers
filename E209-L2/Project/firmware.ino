@@ -33,7 +33,7 @@ unsigned int n_gotas = 0; // Numero de gotas detectadas
 unsigned int segundos = 0; // Intervalo entre gotas
 unsigned int Leitura_AD; // ADC
 float tensao; // Tensao Ultrassonico
-unsigned int volume; // Desired volume
+unsigned int volume; // Volume desejado
 unsigned int tempo; // Tempo de injeção
 bool change = true; // Alterar parametros = true
 bool iniciado = false; // Momento de iniciar a contagem de tempo
@@ -86,7 +86,7 @@ int main() {
             while (fase == 0) {
                 _delay_ms(100);
                 // Conversao p/ int
-                aux_rx = (msg_rx[0] - 48) * 100 + (msg_rx[1] - 48) * 10 + (msg_rx[2] - 48);
+                aux_rx = (msg_rx[0] - 48) * 1 + (msg_rx[1] - 48) * 10 + (msg_rx[2] - 48) * 100;
                 if ((aux_rx <= 999) && (aux_rx >= 100)) {
                     fase ++;
                 }
@@ -103,13 +103,12 @@ int main() {
             aux_rx = 0;
                 
             pos_msg_rx = 0;
-            //fazer o mesmo abaixo se funcionar
             // Confirmar recebimento msg Tempo Infusao
             UART_Transmit("Entre com o Tempo Infusao em minutos \n");
             while (fase == 1) {
                 _delay_ms(100);
                 // Conversao p/ int
-                aux_rx = (msg_rx[0] - 48) * 100 + (msg_rx[1] - 48) * 10 + (msg_rx[2] - 48);
+                aux_rx = (msg_rx[0] - 48) * 1 + (msg_rx[1] - 48) * 10 + (msg_rx[2] - 48) * 100;
                 if ((aux_rx <= 999) && (aux_rx >= 100)) {
                     fase ++;
                 }
