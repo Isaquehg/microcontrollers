@@ -14,7 +14,7 @@
 #define FOSC 16000000U
 #define BAUD 9600
 #define MYUBRR FOSC / 16 / (BAUD - 1)
-#define TAMANHO 4
+#define TAMANHO 3
 
 // Max. vazão motor a 100% PWM
 #define MAX_MOTOR 450 / 60.0
@@ -95,7 +95,7 @@ ISR(USART_RX_vect) {
     msg_rx[pos_msg_rx++] = UDR0;
     //UART_Transmit(msg_rx);
 
-    if (pos_msg_rx == tamanho_msg_rx - 1)
+    if (pos_msg_rx == tamanho_msg_rx)
         pos_msg_rx = 0;
 }
 
@@ -180,7 +180,7 @@ int main() {
                 }
                 _delay_ms(100);
                 // Conversao p/ int
-                aux_rx = (msg_rx[0] - '0') * 100 + (msg_rx[1] - '0') * 10 + (msg_rx[2] - '0');
+                aux_rx = (msg_rx[0] - 48) * 100 + (msg_rx[1] - 48) * 10 + (msg_rx[2] - 48);
                 if ((aux_rx <= 999) && (aux_rx >= 100)) {
                     // Atribuir volume
                     volume = aux_rx;
@@ -193,8 +193,8 @@ int main() {
                     timePrompted = false;
                     UART_LimparBuffer();
                     msg_rx[0] = '\0';
-                    msg_rx[0] = '\0';
-                    msg_rx[0] = '\0';
+                    msg_rx[1] = '\0';
+                    msg_rx[2] = '\0';
                 }
                 break;
             
@@ -205,11 +205,11 @@ int main() {
                 }
                 _delay_ms(100);
                 // Conversao p/ int
-                aux_rx = (msg_rx[0] - '0') * 100 + (msg_rx[1] - '0') * 10 + (msg_rx[2] - '0');
+                aux_rx = (msg_rx[0] - 48) * 100 + (msg_rx[1] - 48) * 10 + (msg_rx[2] - 48);
                 if ((aux_rx <= 999) && (aux_rx >= 100)) {
                     // Atribuir tempo
                     tempo = aux_rx;
-                    itoa(volume, msg_tx, 10);
+                    itoa(tempo, msg_tx, 10);
                     UART_Transmit(msg_tx);
                     UART_Transmit("\n");
 
@@ -328,7 +328,7 @@ int main() {
 
                 break;
         }
-
+/*
         // Detecção de bolhas
         ADMUX = (ADMUX & 0xF8) | ULTRASONIC; // Determinar o pino de leitura
         ADCSRA |= (1 << ADSC); //Inicia a conversão
@@ -345,6 +345,6 @@ int main() {
         // Se detectado algo a menos de 5cm
         if (dist < 5) {
             state = STATE_ALERT;
-        }
+        }*/
     }
 }

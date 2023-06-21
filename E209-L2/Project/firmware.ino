@@ -14,7 +14,7 @@
 #define FOSC 16000000U
 #define BAUD 9600
 #define MYUBRR FOSC / 16 / (BAUD - 1)
-#define TAMANHO 4
+#define TAMANHO 3
 
 // Max. vazão motor a 100% PWM
 #define MAX_MOTOR 450 / 60.0
@@ -56,6 +56,9 @@ enum State {
   STATE_ALERT
 };
 
+    // Setting states
+    State state = STATE_WAIT_VOLUME;
+
 // Conta-gotas
 ISR(INT0_vect) {
     // Contar a partir de 2 gotas
@@ -95,8 +98,23 @@ ISR(USART_RX_vect) {
     msg_rx[pos_msg_rx++] = UDR0;
     //UART_Transmit(msg_rx);
 
-    if (pos_msg_rx == tamanho_msg_rx - 1)
+    if (pos_msg_rx == tamanho_msg_rx)
         pos_msg_rx = 0;
+}
+
+ISR(ADC_vect) {
+    // Detecção de bolhas
+    Leitura_AD = ADC;  // Armazenamento da leitura
+
+    tensao = (Leitura_AD * 5) / 1023.0;  // Cálculo da Tensão
+    dist = (tensao * 20) / 5.0;  // Cálculo da distância
+    itoa(dist, msg_tx, 10);
+
+    // Se detectado algo a menos de 5cm
+    if (dist < 5) {
+        state = STATE_ALERT;
+    }
+    UART_Transmit(msg_tx);
 }
 
 // Transmissão de Dados Serial
@@ -159,6 +177,8 @@ void initialize(){
     // ADC
     ADMUX = (0 << REFS1) + (1 << REFS0); //Utiliza 5V como referência (1023)
     ADCSRA = (1 << ADEN) + (1 << ADPS2) + (1 << ADPS1) + (1 << ADPS0); //Habilita ADC e PS 128 (10 bits)
+    ADCSRA |= (1 << ADIE);  // Habilita interrupção do ADC
+    ADCSRA |= (1 << ADSC);  // Inicia a conversão do ADC
     ADCSRB = 0; //Conversão Única
 
     sei();
@@ -166,9 +186,6 @@ void initialize(){
 
 int main() {
     initialize();
-
-    // Setting states
-    State state = STATE_WAIT_VOLUME;
 
     for(;;){
         switch (state)
@@ -180,7 +197,7 @@ int main() {
                 }
                 _delay_ms(100);
                 // Conversao p/ int
-                aux_rx = (msg_rx[0] - '0') * 100 + (msg_rx[1] - '0') * 10 + (msg_rx[2] - '0');
+                aux_rx = (msg_rx[0] - 48) * 100 + (msg_rx[1] - 48) * 10 + (msg_rx[2] - 48);
                 if ((aux_rx <= 999) && (aux_rx >= 100)) {
                     // Atribuir volume
                     volume = aux_rx;
@@ -193,8 +210,8 @@ int main() {
                     timePrompted = false;
                     UART_LimparBuffer();
                     msg_rx[0] = '\0';
-                    msg_rx[0] = '\0';
-                    msg_rx[0] = '\0';
+                    msg_rx[1] = '\0';
+                    msg_rx[2] = '\0';
                 }
                 break;
             
@@ -205,11 +222,11 @@ int main() {
                 }
                 _delay_ms(100);
                 // Conversao p/ int
-                aux_rx = (msg_rx[0] - '0') * 100 + (msg_rx[1] - '0') * 10 + (msg_rx[2] - '0');
+                aux_rx = (msg_rx[0] - 48) * 100 + (msg_rx[1] - 48) * 10 + (msg_rx[2] - 48);
                 if ((aux_rx <= 999) && (aux_rx >= 100)) {
                     // Atribuir tempo
                     tempo = aux_rx;
-                    itoa(volume, msg_tx, 10);
+                    itoa(tempo, msg_tx, 10);
                     UART_Transmit(msg_tx);
                     UART_Transmit("\n");
 
@@ -325,26 +342,7 @@ int main() {
                 modifyPrompted = false;
                 UART_LimparBuffer();
                 state = STATE_WAIT_VOLUME;
-
-                break;
         }
-
-        // Detecção de bolhas
         ADMUX = (ADMUX & 0xF8) | ULTRASONIC; // Determinar o pino de leitura
-        ADCSRA |= (1 << ADSC); //Inicia a conversão
-        while ((ADCSRA & (1 << ADSC)) == (1 << ADSC)); //Esperar a conversão
-        Leitura_AD = ADC; //Armazenamento da leitura
-
-        tensao = (Leitura_AD * 5) / 1023.0; //Cálculo da Tensão
-        dist = (tensao * 20) / 5.0;// Calculo da distancia
-        itoa(dist, msg_tx, 10);
-        //UART_Transmit("\nDist int:");
-        //UART_Transmit(msg_tx);
-        //UART_Transmit("\n");
-
-        // Se detectado algo a menos de 5cm
-        if (dist < 5) {
-            state = STATE_ALERT;
-        }
     }
 }
