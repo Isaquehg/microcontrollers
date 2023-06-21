@@ -174,6 +174,7 @@ void initialize(){
     TCCR2B = (1 << CS22) | (1 << CS20); // Pre-scaler de 1024
     OCR2A = 0;
 
+
     // ADC
     ADMUX = (0 << REFS1) + (1 << REFS0); //Utiliza 5V como referência (1023)
     ADCSRA = (1 << ADEN) + (1 << ADPS2) + (1 << ADPS1) + (1 << ADPS0); //Habilita ADC e PS 128 (10 bits)
