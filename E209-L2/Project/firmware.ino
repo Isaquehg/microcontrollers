@@ -47,40 +47,42 @@ int erro;
 float dist;
 
 int main() {
-  UART_config(MYUBRR);
-  msg_rx[0] = '\0';
-  msg_rx[1] = '\0';
-  msg_rx[2] = '\0';
+    UART_config(MYUBRR);
+    msg_rx[0] = '\0';
+    msg_rx[1] = '\0';
+    msg_rx[2] = '\0';
 
-  // Habilitando saidas e pull-up
-  DDRD |= (MOTOR + BUZZER);
-  PORTD &= ~(MOTOR + BUZZER);
-  PORTD |= SGOTAS;
+    // Habilitando saidas e pull-up
+    DDRD |= (MOTOR + BUZZER);
+    PORTD &= ~(MOTOR + BUZZER);
+    PORTD |= SGOTAS;
 
-  // INT0(PD2) - Falling edge
-  EICRA = (1 << ISC01);
-  EIMSK = (1 << INT0);
+    // INT0(PD2) - Falling edge
+    EICRA = (1 << ISC01);
+    EIMSK = (1 << INT0);
 
-  // Timer 0 - CTC
-  TCCR0A = (1 << WGM01);
-  TCCR0B = 0;
-  OCR0A = 199;
-  TIMSK0 = (1 << OCIE0A);
+    // Timer 0 - CTC
+    TCCR0A = (1 << WGM01);
+    TCCR0B = 0;
+    OCR0A = 199;
+    TIMSK0 = (1 << OCIE0A);
 
-  // Timer 2 - Fast-PWM
-  // VER QUESTAO COMPARADOR A!!
-  TCCR2A = (1 << COM2A1) | (0 << COM2A0) | (1 << WGM21) | (1 << WGM20);
-  TCCR2B = (1 << CS22) | (1 << CS20); // Pre-scaler de 1024
-  OCR2A = 0;
+    // Timer 2 - Fast-PWM
+    // VER QUESTAO COMPARADOR A!!
+    TCCR2A = (1 << COM2A1) | (0 << COM2A0) | (1 << WGM21) | (1 << WGM20);
+    TCCR2B = (1 << CS22) | (1 << CS20); // Pre-scaler de 1024
+    OCR2A = 0;
 
-  // ADC
-  ADMUX = (0 << REFS1) + (1 << REFS0); //Utiliza 5V como referência (1023)
-  ADCSRA = (1 << ADEN) + (1 << ADPS2) + (1 << ADPS1) + (1 << ADPS0); //Habilita ADC e PS 128 (10 bits)
-  ADCSRB = 0; //Conversão Única
+    // ADC
+    ADMUX = (0 << REFS1) + (1 << REFS0); //Utiliza 5V como referência (1023)
+    ADCSRA = (1 << ADEN) + (1 << ADPS2) + (1 << ADPS1) + (1 << ADPS0); //Habilita ADC e PS 128 (10 bits)
+    ADCSRB = 0; //Conversão Única
 
-  sei();
-  for(;;){
+    sei();
+    for(;;){
         if(change){
+            UART_LimparBuffer();
+
             // Confirmar recebimento msg Volume
             UART_Transmit("Entre com o Volume: \n");
             while (fase == 0) {
@@ -91,18 +93,22 @@ int main() {
                     fase ++;
                 }
             }
+
             // Atribuir volume
             volume = aux_rx;
             itoa(volume, msg_tx, 10);
             UART_Transmit(msg_tx);
             UART_Transmit("\n");
-            // Resetar msg_rx
+
+            // Resetar
             msg_rx[0] = '\0';
             msg_rx[1] = '\0';
             msg_rx[2] = '\0';
+            msg_rx[3] = '\0';
             aux_rx = 0;
-                
             pos_msg_rx = 0;
+            UART_LimparBuffer();
+
             // Confirmar recebimento msg Tempo Infusao
             UART_Transmit("Entre com o Tempo Infusao em minutos \n");
             while (fase == 1) {
@@ -120,11 +126,14 @@ int main() {
         UART_Transmit("\n");
         // Atribuir tempo
         tempo = aux_rx;
+
         // Resetar msg_rx
         msg_rx[0] = '\0';
         msg_rx[1] = '\0';
         msg_rx[2] = '\0';
+        msg_rx[3] = '\0';
         aux_rx = 0;
+
         // Calculating defined flux
         fluxo_definido = (volume * 60) / tempo * 1.0;
         itoa(fluxo_definido, msg_tx, 10);
@@ -246,7 +255,7 @@ ISR(TIMER0_COMPA_vect) {
     }
 }
 
-//Interrupção de Recebimento da Serial
+// Interrupção de Recebimento da Serial
 ISR(USART_RX_vect) {
     // Escreve o valor recebido pela UART na posição pos_msg_rx do buffer msg_rx
     msg_rx[pos_msg_rx++] = UDR0;
@@ -256,7 +265,7 @@ ISR(USART_RX_vect) {
         pos_msg_rx = 0;
 }
 
-//Transmissão de Dados Serial
+// Transmissão de Dados Serial
 void UART_Transmit(char *dados) {
     // Envia todos os caracteres do buffer dados ate chegar um final de linha
     while (*dados != 0) {
@@ -279,4 +288,10 @@ void UART_config(unsigned int ubrr) {
 
     // Configura o formato da mensagem: 8 bits de dados e 1 bits de stop */
     UCSR0C = ((1 << UCSZ01) + (1 << UCSZ00));
+}
+
+// Limpar o buffer de recepção
+void UART_LimparBuffer() {
+    while (UCSR0A & (1 << RXC0))
+        volatile char lixo = UDR0; // Lê e descarta o caractere do buffer de recepção
 }
