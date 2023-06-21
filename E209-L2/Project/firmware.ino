@@ -46,7 +46,7 @@ int fase = 0;// Verificação de recebimento
 int erro;
 float dist;
 
-int main() {
+void initialize(){
     UART_config(MYUBRR);
     msg_rx[0] = '\0';
     msg_rx[1] = '\0';
@@ -68,7 +68,6 @@ int main() {
     TIMSK0 = (1 << OCIE0A);
 
     // Timer 2 - Fast-PWM
-    // VER QUESTAO COMPARADOR A!!
     TCCR2A = (1 << COM2A1) | (0 << COM2A0) | (1 << WGM21) | (1 << WGM20);
     TCCR2B = (1 << CS22) | (1 << CS20); // Pre-scaler de 1024
     OCR2A = 0;
@@ -79,6 +78,11 @@ int main() {
     ADCSRB = 0; //Conversão Única
 
     sei();
+}
+
+int main() {
+    initialize();
+
     for(;;){
         if(change){
             UART_LimparBuffer();
@@ -220,6 +224,8 @@ int main() {
             PORTD |= BUZZER;
             OCR0A = 0;
             UART_Transmit("Bolhas detectadas! \n");
+            _delay_ms(2000);
+            PORTD &= ~BUZZER;
         }
     }
 }
