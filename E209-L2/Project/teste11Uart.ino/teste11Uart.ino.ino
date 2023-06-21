@@ -295,20 +295,19 @@ int main() {
 
             case STATE_MODIFY:
                 // Verificar se usuário deseja modificar dados inseridos
-                if (pos_msg_rx > 0) {
-                    if (!modifyPrompted){
-                        UART_Transmit("Deseja alterar os dados inseridos [s/n]? \n");
-                        modifyPrompted = true;
-                    }
-                    if (msg_rx[0] == 's') {
-                        state = STATE_WAIT_VOLUME;
-                        volumePrompted = false;
-                    } 
-                    else if (msg_rx[0] == 'n') {
-                        state = STATE_COUNT;
-                    }
-                    UART_LimparBuffer();
+                if (!modifyPrompted){
+                    UART_Transmit("Deseja alterar os dados inseridos [s/n]? \n");
+                    modifyPrompted = true;
                 }
+                if (msg_rx[0] == 's') {
+                    state = STATE_WAIT_VOLUME;
+                    volumePrompted = false;
+                } 
+                else if (msg_rx[0] == 'n') {
+                    state = STATE_COUNT;
+                    contando = true;
+                }
+                UART_LimparBuffer();
 
                 break;
 
