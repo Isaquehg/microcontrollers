@@ -53,7 +53,7 @@ enum State {
   STATE_ERROR,
   STATE_COUNT,
   STATE_MODIFY,
-  STATE_ALERTMYUBRR
+  STATE_ALERT
 };
 
     // Setting states
@@ -121,11 +121,11 @@ ISR(ADC_vect) {
 void UART_Transmit(char *dados) {
     // Envia todos os caracteres do buffer dados ate chegar um final de linha
     while (*dados != 0) {
-        while ((UCSR0A & (1 << UDRE0)) == 0); // Aguarda a transmissão acabar
-            // Escreve o caractere no registro de tranmissão
-            UDR0 = *dados;
-            // Passa para o próximo caractere do buffer dados
-            dados++;
+    while ((UCSR0A & (1 << UDRE0)) == 0); // Aguarda a transmissão acabar
+        // Escreve o caractere no registro de tranmissão
+        UDR0 = *dados;
+        // Passa para o próximo caractere do buffer dados
+        dados++;
     }
 }
 
@@ -173,7 +173,6 @@ void initialize(){
     TCCR2A = (1 << COM2A1) | (0 << COM2A0) | (1 << WGM21) | (1 << WGM20);
     TCCR2B = (1 << CS22) | (1 << CS20); // Pre-scaler de 1024
     OCR2A = 0;
-
 
     // ADC
     ADMUX = (0 << REFS1) + (1 << REFS0); //Utiliza 5V como referência (1023)

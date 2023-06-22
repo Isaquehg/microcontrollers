@@ -56,6 +56,9 @@ enum State {
   STATE_ALERT
 };
 
+    // Setting states
+    State state = STATE_WAIT_VOLUME;
+
 // Conta-gotas
 ISR(INT0_vect) {
     // Contar a partir de 2 gotas
@@ -97,6 +100,21 @@ ISR(USART_RX_vect) {
 
     if (pos_msg_rx == tamanho_msg_rx)
         pos_msg_rx = 0;
+}
+
+ISR(ADC_vect) {
+    // Detecção de bolhas
+    Leitura_AD = ADC;  // Armazenamento da leitura
+
+    tensao = (Leitura_AD * 5) / 1023.0;  // Cálculo da Tensão
+    dist = (tensao * 20) / 5.0;  // Cálculo da distância
+    itoa(dist, msg_tx, 10);
+
+    // Se detectado algo a menos de 5cm
+    if (dist < 5) {
+        state = STATE_ALERT;
+    }
+    UART_Transmit(msg_tx);
 }
 
 // Transmissão de Dados Serial
@@ -159,6 +177,8 @@ void initialize(){
     // ADC
     ADMUX = (0 << REFS1) + (1 << REFS0); //Utiliza 5V como referência (1023)
     ADCSRA = (1 << ADEN) + (1 << ADPS2) + (1 << ADPS1) + (1 << ADPS0); //Habilita ADC e PS 128 (10 bits)
+    ADCSRA |= (1 << ADIE);  // Habilita interrupção do ADC
+    ADCSRA |= (1 << ADSC);  // Inicia a conversão do ADC
     ADCSRB = 0; //Conversão Única
 
     sei();
@@ -166,9 +186,6 @@ void initialize(){
 
 int main() {
     initialize();
-
-    // Setting states
-    State state = STATE_WAIT_VOLUME;
 
     for(;;){
         switch (state)
@@ -325,26 +342,7 @@ int main() {
                 modifyPrompted = false;
                 UART_LimparBuffer();
                 state = STATE_WAIT_VOLUME;
-
-                break;
         }
-/*
-        // Detecção de bolhas
         ADMUX = (ADMUX & 0xF8) | ULTRASONIC; // Determinar o pino de leitura
-        ADCSRA |= (1 << ADSC); //Inicia a conversão
-        while ((ADCSRA & (1 << ADSC)) == (1 << ADSC)); //Esperar a conversão
-        Leitura_AD = ADC; //Armazenamento da leitura
-
-        tensao = (Leitura_AD * 5) / 1023.0; //Cálculo da Tensão
-        dist = (tensao * 20) / 5.0;// Calculo da distancia
-        itoa(dist, msg_tx, 10);
-        //UART_Transmit("\nDist int:");
-        //UART_Transmit(msg_tx);
-        //UART_Transmit("\n");
-
-        // Se detectado algo a menos de 5cm
-        if (dist < 5) {
-            state = STATE_ALERT;
-        }*/
     }
 }
