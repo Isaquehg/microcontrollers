@@ -53,7 +53,7 @@ enum State {
   STATE_ERROR,
   STATE_COUNT,
   STATE_MODIFY,
-  STATE_ALERT
+  STATE_ALERTMYUBRR
 };
 
     // Setting states
@@ -121,11 +121,11 @@ ISR(ADC_vect) {
 void UART_Transmit(char *dados) {
     // Envia todos os caracteres do buffer dados ate chegar um final de linha
     while (*dados != 0) {
-    while ((UCSR0A & (1 << UDRE0)) == 0); // Aguarda a transmissão acabar
-        // Escreve o caractere no registro de tranmissão
-        UDR0 = *dados;
-        // Passa para o próximo caractere do buffer dados
-        dados++;
+        while ((UCSR0A & (1 << UDRE0)) == 0); // Aguarda a transmissão acabar
+            // Escreve o caractere no registro de tranmissão
+            UDR0 = *dados;
+            // Passa para o próximo caractere do buffer dados
+            dados++;
     }
 }
 
