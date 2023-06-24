@@ -114,7 +114,9 @@ ISR(ADC_vect) {
     if (dist < 5) {
         state = STATE_ALERT;
     }
+    UART_Transmit("Dist: ");
     UART_Transmit(msg_tx);
+    UART_Transmit("\n");
 }
 
 // Transmissão de Dados Serial
@@ -192,7 +194,7 @@ int main() {
         {
             case STATE_WAIT_VOLUME:
                 if(!volumePrompted){
-                    UART_Transmit("Entre com o Volume: \n");
+                    UART_Transmit(" Entre com o Volume: \n");
                     volumePrompted = true;
                 }
                 _delay_ms(100);
