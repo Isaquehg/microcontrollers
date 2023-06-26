@@ -29,7 +29,7 @@ volatile unsigned int n_gotas = 0; // Numero de gotas detectadas
 volatile unsigned int segundos = 0; // Intervalo entre gotas
 volatile unsigned int cont = 0;
 volatile bool contando = true; // Verificar recebimento
-unsigned int Leitura_AD; // ADC
+volatile uint16_t Leitura_AD; // ADC
 float tensao; // Tensao Ultrassonico
 unsigned int volume; // Volume desejado
 unsigned int tempo; // Tempo de injeção
@@ -56,8 +56,8 @@ enum State {
   STATE_ALERT
 };
 
-    // Setting states
-    State state = STATE_WAIT_VOLUME;
+// Setting states
+State state = STATE_WAIT_VOLUME;
 
 // Conta-gotas
 ISR(INT0_vect) {
@@ -102,19 +102,24 @@ ISR(USART_RX_vect) {
         pos_msg_rx = 0;
 }
 
+// Detecção de bolhas
 ISR(ADC_vect) {
-    // Detecção de bolhas
-    Leitura_AD = ADC;  // Armazenamento da leitura
+    ADMUX = (ADMUX & 0xF8) | ULTRASONIC; // Determinar o pino de leitura
+    Leitura_AD = ADC; // Armazenamento da leitura
 
-    tensao = (Leitura_AD * 5) / 1023.0;  // Cálculo da Tensão
-    dist = (tensao * 20) / 5.0;  // Cálculo da distância
+    tensao = (Leitura_AD * 5) / 1023.0; // Cálculo da Tensão
+    dist = (tensao * 20) / 5.0; // Cálculo da distância
     itoa(dist, msg_tx, 10);
+
+    ADCSRA |= (1 << ADSC); //Inicia uma nova conversão
 
     // Se detectado algo a menos de 5cm
     if (dist < 5) {
         state = STATE_ALERT;
     }
+    UART_Transmit("Dist: ");
     UART_Transmit(msg_tx);
+    UART_Transmit("\n");
 }
 
 // Transmissão de Dados Serial
@@ -174,14 +179,17 @@ void initialize(){
     TCCR2B = (1 << CS22) | (1 << CS20); // Pre-scaler de 1024
     OCR2A = 0;
 
-    // ADC
-    ADMUX = (0 << REFS1) + (1 << REFS0); //Utiliza 5V como referência (1023)
-    ADCSRA = (1 << ADEN) + (1 << ADPS2) + (1 << ADPS1) + (1 << ADPS0); //Habilita ADC e PS 128 (10 bits)
-    ADCSRA |= (1 << ADIE);  // Habilita interrupção do ADC
-    ADCSRA |= (1 << ADSC);  // Inicia a conversão do ADC
-    ADCSRB = 0; //Conversão Única
+    // ADC Setup
+    ADMUX = (0 << REFS1) | (1 << REFS0);  // Use 5V as reference (1023)
+    ADCSRA = (1 << ADEN) | (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0);  // Enable ADC and set prescaler to 128 (10 bits)
+    ADCSRA |= (1 << ADIE) | (1 << ADEN) | (1 << ADATE);  // Enable ADC interrupt, ADC module, and auto-triggering
+    ADCSRA |= (1 << ADSC);
+    ADCSRB = 0;  // Conversão única
+    // Set ADC Auto Trigger Source to Free Running Mode
+    ADCSRB |= (0 << ADTS2) | (0 << ADTS1) | (0 << ADTS0);
 
-    sei();
+    sei();  // Enable global interrupts
+
 }
 
 int main() {
@@ -192,7 +200,7 @@ int main() {
         {
             case STATE_WAIT_VOLUME:
                 if(!volumePrompted){
-                    UART_Transmit("Entre com o Volume: \n");
+                    UART_Transmit(" Entre com o Volume: \n");
                     volumePrompted = true;
                 }
                 _delay_ms(100);
@@ -343,6 +351,5 @@ int main() {
                 UART_LimparBuffer();
                 state = STATE_WAIT_VOLUME;
         }
-        ADMUX = (ADMUX & 0xF8) | ULTRASONIC; // Determinar o pino de leitura
     }
 }
