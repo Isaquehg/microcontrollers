@@ -181,10 +181,10 @@ void initialize(){
 
     // ADC Setup
     // ADC Setup
-  	ADMUX = (0 << REFS1) | (1 << REFS0);  // Use 5V as reference (1023)
-  	ADCSRA = (1 << ADEN) | (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0);  // Enable ADC and set prescaler to 128 (10 bits)
+    ADMUX = (0 << REFS1) | (1 << REFS0);  // Use 5V as reference (1023)
+    ADCSRA = (1 << ADEN) | (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0);  // Enable ADC and set prescaler to 128 (10 bits)
 
-  	ADCSRA |= (1 << ADSC);  // Start ADC conversion
+    ADCSRA |= (1 << ADSC);  // Start ADC conversion
 
     sei();  // Enable global interrupts
 
@@ -303,10 +303,10 @@ int main() {
                 state = STATE_MODIFY;
                 modifyPrompted = false;
           
-          		_delay_ms(300);
+                _delay_ms(300);
                 UART_Transmit("ADC");
           
-          		// Detecção de bolhas
+                // Detecção de bolhas
                 // Check ADC value
                 if (ADCSRA & (1 << ADIF)) {
                   // ADC conversion completed
@@ -320,7 +320,7 @@ int main() {
                   UART_Transmit("\n");
 
                   // Se detectado algo a menos de 5cm
-                  if (dist < 5) {
+                  if (dist <= 6) {
                       state = STATE_ALERT;
                   }
 
@@ -334,7 +334,7 @@ int main() {
                 PORTD |= BUZZER;
                 OCR0A = 0;
                 UART_Transmit("Bolhas detectadas! \n");
-                _delay_ms(2000);
+                _delay_ms(200);
                 PORTD &= ~BUZZER;
                 state = STATE_WAIT_VOLUME;
                 volumePrompted = false;

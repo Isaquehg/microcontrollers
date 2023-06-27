@@ -103,7 +103,7 @@ ISR(USART_RX_vect) {
 }
 
 // Detecção de bolhas
-ISR(ADC_vect) {
+/*ISR(ADC_vect) {
     ADMUX = (ADMUX & 0xF8) | ULTRASONIC; // Determinar o pino de leitura
     Leitura_AD = ADC; // Armazenamento da leitura
 
@@ -120,7 +120,7 @@ ISR(ADC_vect) {
     UART_Transmit("Dist: ");
     UART_Transmit(msg_tx);
     UART_Transmit("\n");
-}
+}*/
 
 // Transmissão de Dados Serial
 void UART_Transmit(char *dados) {
@@ -180,13 +180,11 @@ void initialize(){
     OCR2A = 0;
 
     // ADC Setup
+    // ADC Setup
     ADMUX = (0 << REFS1) | (1 << REFS0);  // Use 5V as reference (1023)
     ADCSRA = (1 << ADEN) | (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0);  // Enable ADC and set prescaler to 128 (10 bits)
-    ADCSRA |= (1 << ADIE) | (1 << ADEN) | (1 << ADATE);  // Enable ADC interrupt, ADC module, and auto-triggering
-    ADCSRA |= (1 << ADSC);
-    ADCSRB = 0;  // Conversão única
-    // Set ADC Auto Trigger Source to Free Running Mode
-    ADCSRB |= (0 << ADTS2) | (0 << ADTS1) | (0 << ADTS0);
+
+    ADCSRA |= (1 << ADSC);  // Start ADC conversion
 
     sei();  // Enable global interrupts
 
@@ -304,6 +302,31 @@ int main() {
                 // Alterar estado
                 state = STATE_MODIFY;
                 modifyPrompted = false;
+          
+                _delay_ms(300);
+                UART_Transmit("ADC");
+          
+                // Detecção de bolhas
+                // Check ADC value
+                if (ADCSRA & (1 << ADIF)) {
+                  // ADC conversion completed
+                  Leitura_AD = ADC; // Armazenamento da leitura
+
+                  tensao = (Leitura_AD * 5) / 1023.0; // Cálculo da Tensão
+                  dist = (tensao * 20) / 5.0; // Cálculo da distância
+                  itoa(dist, msg_tx, 10);
+                  UART_Transmit("Dist: ");
+                  UART_Transmit(msg_tx);
+                  UART_Transmit("\n");
+
+                  // Se detectado algo a menos de 5cm
+                  if (dist <= 6) {
+                      state = STATE_ALERT;
+                  }
+
+                  // Restart ADC conversion
+                  ADCSRA |= (1 << ADSC);
+                }
 
                 break;
                 
@@ -311,7 +334,7 @@ int main() {
                 PORTD |= BUZZER;
                 OCR0A = 0;
                 UART_Transmit("Bolhas detectadas! \n");
-                _delay_ms(2000);
+                _delay_ms(200);
                 PORTD &= ~BUZZER;
                 state = STATE_WAIT_VOLUME;
                 volumePrompted = false;
